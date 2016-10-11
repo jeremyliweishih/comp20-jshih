@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Classic Movie</title>
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+<h1 id="title">Classic Movie</h1>
+
+<video src="https://www.cs.tufts.edu/comp/20/classic.mp4" id="classic_video" controls></video>
+<div id="movie_quotes"></div>
+
+<script>
+	var v = document.getElementsByTagName("video")[0];
+	//v.addEventListener("timeupdate", annotate(), true);
+
+	v.ontimeupdate = function() {annotate ()};
+
+	function annotate(){
+		var currentTime = v.currentTime;
+
+		if(currentTime > 24.0 && currentTime < 27.0)
+		{
+			document.getElementById("movie_quotes").innerHTML = "Igor: DR. FRANKENSTEIN?!?!?";
+		}
+		
+		else if(currentTime > 30.0 && currentTime < 33.0)
+		{
+			document.getElementById("movie_quotes").innerHTML = "Dr. Frederick Frankenstein: Frokensteen.";
+		}
+
+		else if(currentTime > 34.0 && currentTime < 36.0)
+		{
+			document.getElementById("movie_quotes").innerHTML = "Igor: You're putting me on.";
+		}
+
+		else if(currentTime > 36.5 && currentTime < 39.0)
+		{
+			document.getElementById("movie_quotes").innerHTML = "Dr. Frederick Frankenstein: No, it pronounced, 'Frokensteen'.";
+		}
+
+		else if(currentTime > 39.1 && currentTime < 42)
+		{
+			document.getElementById("movie_quotes").innerHTML = "Igor: Do you also say Froaderick?";
+		}
+
+		else if(currentTime > 42 && currentTime < 44)
+		{
+			document.getElementById("movie_quotes").innerHTML = "Dr. Frederick Frankenstein: No . . . 'Frederick.'";
+		}
+
+		else if(currentTime > 44 && currentTime < 47)
+		{
+			document.getElementById("movie_quotes").innerHTML = "Igor: Well, why isn't it 'Froaderick Frokensteen'?";
+		}
+
+		else if(currentTime > 47 && currentTime < 50)
+		{
+			document.getElementById("movie_quotes").innerHTML = "Dr. Frederick Frankenstein: It isn't, it's 'Frederick Frokensteen'";
+		}
+
+		else if(currentTime > 50 && currentTime < 51)
+		{
+			document.getElementById("movie_quotes").innerHTML = "Igor: I see.";
+		}
+
+		else if(currentTime > 51 && currentTime < 53)
+		{
+			document.getElementById("movie_quotes").innerHTML = "Dr. Frederick Frankenstein: You must be Igor. [He pronounces it ee-gor.]";
+		}
+
+		else if(currentTime > 53 && currentTime < 56)
+		{
+			document.getElementById("movie_quotes").innerHTML = "Igor: No, it's pronounced 'eye-gor.'";
+		}
+
+		else if(currentTime > 57 && currentTime < 58)
+		{
+			document.getElementById("movie_quotes").innerHTML = "Dr. Frederick Frankenstein: But they told me it was 'ee-gor'...";
+		}
+
+		else if(currentTime > 58 && currentTime < 59.5)
+		{
+			document.getElementById("movie_quotes").innerHTML = "Igor: Well, they were wrong then, weren't they?";
+		}
+
+		else if(currentTime > 60 && currentTime < 64)
+		{
+			document.getElementById("movie_quotes").innerHTML = "Dr. Frederick Frankenstein: Uh, you were sent here by Herr Falkstein, weren't you?";
+		}
+
+		else if(currentTime > 64 && currentTime < 68)
+		{
+			document.getElementById("movie_quotes").innerHTML = "Igor: Yes. My grandfather used to work for your grandfather.";
+		}
+
+		else if(currentTime > 70 && currentTime < 72)
+		{
+			document.getElementById("movie_quotes").innerHTML = "Dr. Frederick Frankenstein: How nice.";
+		}
+
+		else if(currentTime > 72 && currentTime < 74)
+		{
+			document.getElementById("movie_quotes").innerHTML = "Igor: Of course the rates have gone up.";
+		}
+
+		else if(currentTime > 74 && currentTime < 88)
+		{
+			document.getElementById("movie_quotes").innerHTML = "Dr. Frederick Frankenstein: Of course, of course, I'm sure we'll get along splendidly. Oh, I uh, you know I don't mean to embarrass you, but I'm rather a brilliant surgeon. Perhaps I can help you with that hump.";
+		}
+
+		else if(currentTime > 88 && currentTime < 89)
+		{
+			document.getElementById("movie_quotes").innerHTML = "[Awkward Silence]";
+		}
+
+		else if(currentTime > 89 && currentTime < 90)
+		{
+			document.getElementById("movie_quotes").innerHTML = "Igor: What hump?";
+		}
+
+		else if(currentTime > 90 && currentTime < 96)
+		{
+			document.getElementById("movie_quotes").innerHTML = "[More Awkward Silence]";
+		}
+
+		else document.getElementById("movie_quotes").innerHTML = "";
+	} 
+
+</script>
+</body>
+</html>	

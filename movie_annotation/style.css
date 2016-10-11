@@ -1,0 +1,28 @@
+body{
+	background-color: #000000;
+}
+
+#title{
+	text-align: center;
+	margin: 0;
+	font-family: "Courier New", Courier, monospace;
+	color: #FFFFFF;
+}
+
+video{
+   max-width:64rem;
+   width:100%;
+   max-height:30.875rem;
+   height:100%;
+   display: block;
+   margin: 0 auto;
+   background-color:#000000;
+}
+
+#movie_quotes{
+	text-align: center;
+	margin: 0;
+	font-family: "Courier New", Courier, monospace;
+	font-weight: bold;
+	color:#FFFFFF;
+}
