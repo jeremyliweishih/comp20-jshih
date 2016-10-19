@@ -36,6 +36,31 @@ var options = {
 
 var infowindow = new google.maps.InfoWindow();
 
+var schedule = {
+	"South Station": [],
+	"Andrew": [],
+	"Harvard Square": [],
+	"JFK/UMass": [],
+	"Savin Hill": [],
+	"Broadway": [],
+	"North Quincy": [],
+	"Shawmut": [],
+	"Davis": [],
+	"Alewife": [],
+	"Kendall/MIT": [],
+	"Charles/MGH": [],
+	"Downtown Crossing": [],
+	"Quincy Center": [],
+	"Quincy Adams": [],
+	"Ashmont": [],
+	"Wollaston": [],
+	"Fields Corner": [],
+	"Central Square": [],
+	"Braintree": [],
+	"Park Street": [],
+	"Porter Square": []
+}
+
 function init()
 {
 	map = new google.maps.Map(document.getElementById("map_canvas"), options);
@@ -80,14 +105,21 @@ function renderMap()
 
 	add_stops();
 	addRedLine();
+	loadSchedule();
 }
 
 function addMarker(stop) {
   var marker = new google.maps.Marker({
     position: stop.position,
     icon: 'subway.png',
+    title: stop.title,
     map: map
   });
+
+  	google.maps.event.addListener(marker, 'click', function() {
+		infowindow.setContent(marker.title);
+		infowindow.open(map, marker);
+	});
 }
 
 function add_stops()
@@ -275,5 +307,34 @@ function addClosestStop(){
 	 });
 
 	closest.setMap(map);
+}
+
+
+function loadSchedule() {
+	request = new XMLHttpRequest();
+	request.open("get", "https://rocky-taiga-26352.herokuapp.com/redline.json", true);
+	request.onreadystatechange = funex;
+	request.send();
+}
+
+function funex() {
+	if (request.readyState == 4 && request.status == 200) {
+		theData = request.responseText;
+		messages = JSON.parse(theData);
+		trips = messages.TripList.Trips;
+
+		//populate schedule
+		for(var i = 0; i < trips.length; i++){
+			predictions = trips[i].Predictions;
+			for(var j = 0; j < predictions.length; j++){
+				stop = predictions[j].Stop;
+				schedule[stop].push(predictions[j].Seconds);
+				console.log(schedule[stop]);
+				schedule[stop].sort(function(a, b){return a-b});
+			}
+		}
+
+		console.log(schedule);
+	}
 }
 
