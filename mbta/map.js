@@ -359,13 +359,31 @@ function funex() {
 		messages = JSON.parse(theData);
 		trips = messages.TripList.Trips;
 		console.log(trips);
-		//clear to stop replicates
-		// for(var i = 0; i < trips.length; i++){
-		// 	for(var j = 0; j < predictions.length; j++){
-		// 		stop = predictions[j].Stop;
-		// 		schedule[stop] = {};
-		// 	}
-		// }
+
+		schedule = {
+			"South Station": [],
+			"Andrew": [],
+			"Harvard Square": [],
+			"JFK/UMass": [],
+			"Savin Hill": [],
+			"Broadway": [],
+			"North Quincy": [],
+			"Shawmut": [],
+			"Davis": [],
+			"Alewife": [],
+			"Kendall/MIT": [],
+			"Charles/MGH": [],
+			"Downtown Crossing": [],
+			"Quincy Center": [],
+			"Quincy Adams": [],
+			"Ashmont": [],
+			"Wollaston": [],
+			"Fields Corner": [],
+			"Central Square": [],
+			"Braintree": [],
+			"Park Street": [],
+			"Porter Square": []
+		}
 
 		//populate schedule
 		for(var i = 0; i < trips.length; i++){
