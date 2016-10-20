@@ -82,7 +82,7 @@ var infowindow = new google.maps.InfoWindow();
 var request = new XMLHttpRequest();
 
 var options = {
-    zoom: 15, // The larger the zoom number, the bigger the zoom
+    zoom: 15,
     center: whereIAm,
     mapTypeId: google.maps.MapTypeId.ROADMAP
   };
@@ -394,7 +394,6 @@ function funex() {
 				schedule[stop].sort(function(a, b){
 						    var keyA = new Date(a.Time),
 						        keyB = new Date(b.Time);
-						    // Compare the 2 dates
 						    if(keyA < keyB) return -1;
 						    if(keyA > keyB) return 1;
 						    return 0;
