@@ -35,6 +35,8 @@ var options = {
   };
 
 var infowindow = new google.maps.InfoWindow();
+var request = new XMLHttpRequest();
+
 
 var schedule = {
 	"South Station": [],
@@ -138,23 +140,29 @@ function addMarker(stop) {
     map: map
   });
 
-  	google.maps.event.addListener(marker, 'click', function() {
-  		loadSchedule();
-
-  		stop = schedule[marker.title];
-  		scheduleWindow = infoWindows[marker.title];
-  		scheduleWindow.close();
-  		var contentString = "";
-  		scheduleWindow.setContent(contentString);
-  		for(var i = 0; i < stop.length; i++){
-  			contentString = contentString + "Time Until: " + (Math.floor(stop[i].Time / 60)) + "minutes and " 
-  												+ (stop[i].Time - (Math.floor(stop[i].Time / 60) * 60)) + " seconds" 
-  													+ ", Direction: " + stop[i].Direction + "<br>";
-  		}
-
-		scheduleWindow.setContent(contentString);
+  	if(request.stats == 404){
+  		scheduleWindow.setContent("Please click again!");
 		scheduleWindow.open(map, this);
-	});
+  	}
+  	else{
+	  	google.maps.event.addListener(marker, 'click', function() {
+	  		loadSchedule();
+
+	  		stop = schedule[marker.title];
+	  		scheduleWindow = infoWindows[marker.title];
+	  		scheduleWindow.close();
+	  		var contentString = "";
+	  		scheduleWindow.setContent(contentString);
+	  		for(var i = 0; i < stop.length; i++){
+	  			contentString = contentString + "Time Until: " + (Math.floor(stop[i].Time / 60)) + " minutes and " 
+	  												+ (stop[i].Time - (Math.floor(stop[i].Time / 60) * 60)) + " seconds" 
+	  													+ ", Direction: " + stop[i].Direction + "<br>";
+	  		}
+
+			scheduleWindow.setContent(contentString);
+			scheduleWindow.open(map, this);
+		});
+	  }
 }
 
 function add_stops()
@@ -346,7 +354,6 @@ function addClosestStop(){
 
 
 function loadSchedule() {
-	request = new XMLHttpRequest();
 	request.open("get", "https://rocky-taiga-26352.herokuapp.com/redline.json", true);
 	request.onreadystatechange = funex;
 	request.send();
@@ -358,8 +365,8 @@ function funex() {
 		theData = request.responseText;
 		messages = JSON.parse(theData);
 		trips = messages.TripList.Trips;
-		console.log(trips);
 
+		//clear schedule to remove duplicates
 		schedule = {
 			"South Station": [],
 			"Andrew": [],
