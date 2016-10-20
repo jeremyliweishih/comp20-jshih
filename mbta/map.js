@@ -61,6 +61,31 @@ var schedule = {
 	"Porter Square": []
 }
 
+var infoWindows = {
+	"South Station": infowindow = new google.maps.InfoWindow(),
+	"Andrew": infowindow = new google.maps.InfoWindow(),
+	"Harvard Square": infowindow = new google.maps.InfoWindow(),
+	"JFK/UMass": infowindow = new google.maps.InfoWindow(),
+	"Savin Hill": infowindow = new google.maps.InfoWindow(),
+	"Broadway": infowindow = new google.maps.InfoWindow(),
+	"North Quincy": infowindow = new google.maps.InfoWindow(),
+	"Shawmut": infowindow = new google.maps.InfoWindow(),
+	"Davis": infowindow = new google.maps.InfoWindow(),
+	"Alewife": infowindow = new google.maps.InfoWindow(),
+	"Kendall/MIT": infowindow = new google.maps.InfoWindow(),
+	"Charles/MGH": infowindow = new google.maps.InfoWindow(),
+	"Downtown Crossing": infowindow = new google.maps.InfoWindow(),
+	"Quincy Center": infowindow = new google.maps.InfoWindow(),
+	"Quincy Adams": infowindow = new google.maps.InfoWindow(),
+	"Ashmont": infowindow = new google.maps.InfoWindow(),
+	"Wollaston": infowindow = new google.maps.InfoWindow(),
+	"Fields Corner": infowindow = new google.maps.InfoWindow(),
+	"Central Square": infowindow = new google.maps.InfoWindow(),
+	"Braintree": infowindow = new google.maps.InfoWindow(),
+	"Park Street": infowindow = new google.maps.InfoWindow(),
+	"Porter Square": infowindow = new google.maps.InfoWindow()
+}
+
 function init()
 {
 	map = new google.maps.Map(document.getElementById("map_canvas"), options);
@@ -88,24 +113,21 @@ function renderMap()
 	whereIAm = new google.maps.LatLng(lat, long);
 	map.panTo(whereIAm);
 
-	marker = new google.maps.Marker( {
+	position_marker = new google.maps.Marker( {
 		position: whereIAm,
 		title: "Your Position"
 	});
 
-    marker.addListener('click', function() {
-    	addClosestStop();
-    });
-	marker.setMap(map);
+	position_marker.setMap(map);
 
-	google.maps.event.addListener(marker, 'click', function() {
+	google.maps.event.addListener(position_marker, 'click', function() {
 		infowindow.setContent(marker.title);
-		infowindow.open(map, marker);
+		infowindow.open(map, position_marker);
 	});
 
 	add_stops();
 	addRedLine();
-	loadSchedule();
+	addClosestStop();
 }
 
 function addMarker(stop) {
@@ -117,8 +139,21 @@ function addMarker(stop) {
   });
 
   	google.maps.event.addListener(marker, 'click', function() {
-		infowindow.setContent(marker.title);
-		infowindow.open(map, marker);
+  		loadSchedule();
+
+  		stop = schedule[marker.title];
+  		scheduleWindow = infoWindows[marker.title];
+  		scheduleWindow.close();
+  		var contentString = "";
+  		scheduleWindow.setContent(contentString);
+  		for(var i = 0; i < stop.length; i++){
+  			contentString = contentString + "Time Until: " + (Math.floor(stop[i].Time / 60)) + "minutes and " 
+  												+ (stop[i].Time - (Math.floor(stop[i].Time / 60) * 60)) + " seconds" 
+  													+ ", Direction: " + stop[i].Direction + "<br>";
+  		}
+
+		scheduleWindow.setContent(contentString);
+		scheduleWindow.open(map, this);
 	});
 }
 
@@ -319,22 +354,41 @@ function loadSchedule() {
 
 function funex() {
 	if (request.readyState == 4 && request.status == 200) {
+
 		theData = request.responseText;
 		messages = JSON.parse(theData);
 		trips = messages.TripList.Trips;
+		console.log(trips);
+		//clear to stop replicates
+		// for(var i = 0; i < trips.length; i++){
+		// 	for(var j = 0; j < predictions.length; j++){
+		// 		stop = predictions[j].Stop;
+		// 		schedule[stop] = {};
+		// 	}
+		// }
 
 		//populate schedule
 		for(var i = 0; i < trips.length; i++){
 			predictions = trips[i].Predictions;
+			destination = trips[i].Destination;
 			for(var j = 0; j < predictions.length; j++){
 				stop = predictions[j].Stop;
-				schedule[stop].push(predictions[j].Seconds);
-				console.log(schedule[stop]);
-				schedule[stop].sort(function(a, b){return a-b});
+				schedule[stop].push({Time: predictions[j].Seconds, Direction: destination});
+				
+				schedule[stop].sort(function(a, b){
+						    var keyA = new Date(a.Time),
+						        keyB = new Date(b.Time);
+						    // Compare the 2 dates
+						    if(keyA < keyB) return -1;
+						    if(keyA > keyB) return 1;
+						    return 0;
+				});
 			}
 		}
-
-		console.log(schedule);
 	}
+
+	// else if(request.status >= 400 && request.status <= 499){
+	//  	alert("Please click again!");
+	//  }
 }
 
