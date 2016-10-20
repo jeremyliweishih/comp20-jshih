@@ -1,6 +1,3 @@
-var map;
-var lat = 0;
-var long = 0;
 var stops = [
 	    {lat: 42.395428, lng: -71.142483},
 	    {lat: 42.39674, lng: -71.121815},
@@ -26,17 +23,6 @@ var stops = [
 	    {lat: 42.29312583, lng: -71.06573796000001},
 	    {lat: 42.284652, lng: -71.06448899999999}
 	];
-
-var whereIAm = new google.maps.LatLng(lat, long);
-var options = {
-    zoom: 15, // The larger the zoom number, the bigger the zoom
-    center: whereIAm,
-    mapTypeId: google.maps.MapTypeId.ROADMAP
-  };
-
-var infowindow = new google.maps.InfoWindow();
-var request = new XMLHttpRequest();
-
 
 var schedule = {
 	"South Station": [],
@@ -88,6 +74,19 @@ var infoWindows = {
 	"Porter Square": infowindow = new google.maps.InfoWindow()
 }
 
+var map;
+var lat = 0;
+var long = 0;
+var whereIAm = new google.maps.LatLng(lat, long);
+var infowindow = new google.maps.InfoWindow();
+var request = new XMLHttpRequest();
+
+var options = {
+    zoom: 15, // The larger the zoom number, the bigger the zoom
+    center: whereIAm,
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+  };
+
 function init()
 {
 	map = new google.maps.Map(document.getElementById("map_canvas"), options);
@@ -123,13 +122,14 @@ function renderMap()
 	position_marker.setMap(map);
 
 	google.maps.event.addListener(position_marker, 'click', function() {
-		infowindow.setContent(marker.title);
+		infowindow.setContent(position_marker.title);
 		infowindow.open(map, position_marker);
 	});
 
 	add_stops();
 	addRedLine();
 	addClosestStop();
+	loadSchedule();
 }
 
 function addMarker(stop) {
@@ -140,29 +140,21 @@ function addMarker(stop) {
     map: map
   });
 
-  	if(request.stats == 404){
-  		scheduleWindow.setContent("Please click again!");
-		scheduleWindow.open(map, this);
-  	}
-  	else{
-	  	google.maps.event.addListener(marker, 'click', function() {
-	  		loadSchedule();
-
-	  		stop = schedule[marker.title];
-	  		scheduleWindow = infoWindows[marker.title];
-	  		scheduleWindow.close();
-	  		var contentString = "";
-	  		scheduleWindow.setContent(contentString);
-	  		for(var i = 0; i < stop.length; i++){
-	  			contentString = contentString + "Time Until: " + (Math.floor(stop[i].Time / 60)) + " minutes and " 
-	  												+ (stop[i].Time - (Math.floor(stop[i].Time / 60) * 60)) + " seconds" 
-	  													+ ", Direction: " + stop[i].Direction + "<br>";
-	  		}
-
+		google.maps.event.addListener(marker, 'click', function() {
+			stop = schedule[marker.title];
+			scheduleWindow = infoWindows[marker.title];
+			scheduleWindow.close();
+			var contentString = "";
 			scheduleWindow.setContent(contentString);
-			scheduleWindow.open(map, this);
-		});
-	  }
+			for(var i = 0; i < stop.length; i++){
+				contentString = contentString + "Time Until: " + (Math.floor(stop[i].Time / 60)) + " minutes and " 
+													+ (stop[i].Time - (Math.floor(stop[i].Time / 60) * 60)) + " seconds" 
+														+ ", Direction: " + stop[i].Direction + "<br>";
+			}
+
+		scheduleWindow.setContent(contentString);
+		scheduleWindow.open(map, this);
+	});
 }
 
 function add_stops()
@@ -307,7 +299,6 @@ function closestStop(){
 		}
 
 		var R = 6371; // km 
-		//has a problem with the .toRad() method below.
 		var x1 = lat2-lat1;
 		var dLat = x1.toRad();  
 		var x2 = lon2-lon1;
@@ -354,6 +345,7 @@ function addClosestStop(){
 
 
 function loadSchedule() {
+	request = new XMLHttpRequest();
 	request.open("get", "https://rocky-taiga-26352.herokuapp.com/redline.json", true);
 	request.onreadystatechange = funex;
 	request.send();
@@ -361,8 +353,7 @@ function loadSchedule() {
 
 function funex() {
 	if (request.readyState == 4 && request.status == 200) {
-
-		theData = request.responseText;
+		theData = request.responseText;		
 		messages = JSON.parse(theData);
 		trips = messages.TripList.Trips;
 
@@ -412,8 +403,8 @@ function funex() {
 		}
 	}
 
-	// else if(request.status >= 400 && request.status <= 499){
-	//  	alert("Please click again!");
-	//  }
+	 else if(request.status == 404){
+	  	loadSchedule();
+	 }
 }
 
