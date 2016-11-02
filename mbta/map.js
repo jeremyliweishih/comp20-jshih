@@ -346,7 +346,7 @@ function addClosestStop(){
 
 function loadSchedule() {
 	request = new XMLHttpRequest();
-	request.open("get", "https://rocky-taiga-26352.herokuapp.com/redline.json", true);
+	request.open("get", "https://calm-peak-87985.herokuapp.com/redline.json", true);
 	request.onreadystatechange = funex;
 	request.send();
 }
