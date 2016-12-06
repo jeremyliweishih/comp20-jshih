@@ -32,7 +32,7 @@
  		<p>Database False Information</p> 
 		<ul>
 		<li>Issue: With the correct path of the web application, anyone can upload their own data with the use of CURL. Thus,
-		the function of the leaderboard is basically null as anyone can falsify information. The following was entered to exploit this weakness.
+		the function of the leaderboard is basically null as anyone can falsify information. The following was entered to exploit this weakness:
 			<p>curl --data "username=REKT&score=999999999999999999999&gamegrid=rofl" https://stark-savannah-16303.herokuapp.com/submit.json/</p></li></li>
 		<li>Location: Exploited on the /submit.json path</li>
 		<li>Severity of issue: High. The function of the leaderboard is effectively nullified as anyone can post any score that they would want</li>
