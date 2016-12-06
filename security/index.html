@@ -1,0 +1,74 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Security Assessment</title>
+</head>
+
+<body>
+	<h3>Introduction</h3>
+	<p>I am hired as a security consultant to document and resolve the security issues that lie
+	within a web application that acts as a game center for a popular game called 2048. The 
+	web application allows users to submit their scores through their 2048 game, and to view
+	global leaderboards or their own high scores.</p>
+
+	<h3>Methodology</h3>
+	<p> To discover any security flaws, I initially performed attacks without reading the source code. This is known as
+	"black box" testing. I did this by utilizing curl to send various data and requests to the web application. I did this
+	by posting maleficent data by masquerading it as username information that the web application seeks. With this flaw,
+	I am able to inject false data, JavaScript, and HTML code to make changes to the web application as I see fit. Afterwards,
+	I analyzed the source code in whatis known as white box testing to see if I could discover any further flaws.</p>
+
+	<h3>Abstract of Findings</h3>
+	<p>The biggest loophole found was that since the game requires users to input the username it was easy to predict that
+		this information alongside the game score and game grid had to be sent over to the web application. Therefore, the
+		web application must take in this information. Thus, we can use this weakness to inject malicious code masquerading
+		as this information and then it would be executed on the mainpage.  Moreover, with the source code itself, we can 
+		see the specific details, for example class tags, of the web app itself and then change it as we see fit.</p>
+
+ 	<h3>Issues Found</h3>
+
+ 		<p>Database False Information</p> 
+		<ul>
+		<li>Issue: With the correct path of the web application, anyone can upload their own data with the use of CURL. Thus,
+		the function of the leaderboard is basically null as anyone can falsify information. The following was entered to exploit this weakness.
+			<p>curl --data "username=REKT&score=999999999999999999999&gamegrid=rofl" https://stark-savannah-16303.herokuapp.com/submit.json/</p></li></li>
+		<li>Location: Exploited on the /submit.json path</li>
+		<li>Severity of issue: High. The function of the leaderboard is effectively nullified as anyone can post any score that they would want</li>
+		<li>Description of issue: This was found by predicting the information that the web application will take in</li>
+		<li>Proof of vulnerability: <br>&emsp;&emsp;<img src="false_data.png" alt="Database Injection False Data" width="25%" height="25%"></li>
+		<li>Resolution: This could be fixed by either verifying the score with the provided grid or to calculate the score directly from the grid on the server-side.</li>
+		</ul>
+
+		<p>Cross-Site-Scripting(XSS)</p> 	
+		<ul>
+		<li>Issue: Since usernames are manually inputted, JavaScript code could be inputted and be executed on the web application. I entered the following to rotate the page:
+			<p>curl --data "username=<script>document.body.style.setProperty(\"-webkit-transform\", \"rotate(-90deg)\", null);</script>&score=999999999999999999999&gamegrid=rofl" https://stark-savannah-16303.herokuapp.com/submit.json/</p></li>
+		<li>Location: This was again found in the /submit.json path</li>
+		<li>Severity of issue: High. Any sort of malicious code could be inputted into this application effectively killing the functionality of the web application</li>
+		<li>Description of issue: Again this was found by knowing what information the web application takes in and where it accepts it</li>
+		<li>Proof of vulnerability: <br>&emsp;&emsp;<img src="xss.png" alt="XSS Rotation" width="25%" height="25%"></li>
+		<li>Resolution. To prevent Cross-Site-Scripting, special characters that denote scripts should be filtered out so that these scripts will not run. This can be done by filtering out the "<" and ">" characters. </li>
+		</ul>
+
+
+		<p>HTML Injection</p> 	
+		<ul>
+		<li>Issue: HTML code can be injected as an username to ruin the format and aesthetics of the page. I inputted the following:
+			<p>curl --data "username=&lt;h1&gt;GET REKT&lt;/h1&gt;&score=99999&gamegrid=lol" https://stark-savannah-16303.herokuapp.com/submit.json/</p></li>
+		<li>Location: Again found in the /submit.json path</li>
+		<li>Severity of issue: Medium-High. The look and format of the entire website can be changed but the functionality will at least still be present</li>
+		<li>Description of issue: Again found by knowing what information the web application takes in</li>
+		<li>Proof of vulnerability: <br> &emsp;&emsp;<img src="html.png" alt="HTML Injection" width="25%" height="25%"></li>
+		<li>Resolution. To fix this problem special characters such as "<" or ">" can be filtered out. Another way to fix this would to be recognize that the inputted username is in fact malicious code and to stop the injection entirely.</li>
+		</ul>
+
+
+
+	<h3>Conclusion</h3>
+	<p> Although the above issues are pressing, the methodology to solve them is not unrealstic. As stated above, injections can be solved by removing special characters from the inputted data or to write checks in the web application itself to recognize malicious code. Moreover, the falsified data can be solved by verifying the score to the grid or to calculate the score from the grid itself. This can be inputted with negligible costs considering the fine engineers that run this institution.
+	</p>
+
+</body>
+</html>
